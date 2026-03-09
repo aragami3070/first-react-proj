@@ -1,17 +1,13 @@
-import { Routes, Route, Link } from "react-router-dom";
-import Home from "./pages/Home";
-import About from "./pages/About";
+import { Routes, Route } from "react-router-dom";
+import NavBar from "./components/NavBar";
+import { routes } from "./routes";
 
 function App() {
   return (
     <>
-      <nav>
-        <Link to="/">Home</Link> | <Link to="/about">About</Link>
-      </nav>
-
+      <NavBar />
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
+        {routes.map(router => <Route path={router.path} element={router.element} />)}
       </Routes>
     </>
   );
