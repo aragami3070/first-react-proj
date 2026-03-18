@@ -18,6 +18,10 @@ export const darkTheme = createTheme({
       primary: '#E5E7EB',  // основной текст
       secondary: '#94A3B8',// второстепенный текст
     },
+    divider: '#94A3B8',
+    error: {
+      main: '#FF3456'
+    },
   },
 });
 
@@ -30,13 +34,17 @@ export const lightTheme = createTheme({
       paper: '#FFFFFF',    // карточки
     },
     primary: {
-      main: '#6B7280',     // кнопки
+      main: '#9FAFBF',     // кнопки
     },
     secondary: {
       main: '#D97706',     // автор цитаты
     },
     text: {
       primary: '#111827',  // основной текст
+    },
+    divider: '#1E293B',
+    error: {
+      main: '#F52538'
     },
   },
 });
