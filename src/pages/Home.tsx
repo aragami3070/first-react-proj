@@ -1,4 +1,5 @@
-import { Button, Typography, useTheme } from "@mui/material";
+import { Button, SvgIcon, Typography, useTheme } from "@mui/material";
+import Icon from "../assets/icon.svg?react"
 import { Link } from "react-router-dom";
 import { CenterFullScreenLayout } from "../components/CenterFullScreenLayout";
 import { GridBackGroundLayout } from "../components/GridBackGroundLayout";
@@ -9,6 +10,14 @@ export default function Home() {
   return (
     <>
       <GridBackGroundLayout sx={{ minWidth: '100vw' }}>
+        <SvgIcon component={Icon} inheritViewBox
+          sx={{
+            width: 100,
+            height: 100,
+            fontSize: 'inherit',
+            flexShrink: 0,
+            color: "#FFFFFF"
+          }} />
         <Typography variant="h2" sx={{ padding: 2 }}>
           Добро пожаловать в &lt;Цитаты Дня&gt;!
         </Typography>
