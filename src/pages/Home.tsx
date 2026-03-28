@@ -1,6 +1,6 @@
 import { Box, Button, Container, Typography, useTheme } from "@mui/material";
 import { alpha } from "@mui/material/styles";
-
+import { Link } from "react-router-dom";
 
 export default function Home() {
 
@@ -35,13 +35,14 @@ export default function Home() {
             justifyContent: 'center',
           }}
         >
+          {/* TODO: надо добавить лого */}
           <Typography variant="h2" sx={{ padding: 2 }}>
             Добро пожаловать в &lt;Цитаты Дня&gt;!
           </Typography>
           <Typography variant="h4" sx={{ padding: 2, paddingBottom: 8 }}>
             Ваши любимые мемные цитаты из фильмов и сериалов.
           </Typography>
-          <Button sx={{
+          <Button component={Link} to="/login" sx={{
             borderRadius: "12px",
             px: 2.5,
             boxShadow: 3,
