@@ -1,6 +1,6 @@
 import { AppBar, Toolbar, Button, Box, useTheme, IconButton } from "@mui/material";
 import { Link } from "react-router-dom";
-import { routes } from "../routes";
+import { navRouters } from "../routes";
 import { useContext } from "react";
 import { ColorModeContext } from "../App";
 import LightModeIcon from "@mui/icons-material/LightMode"
@@ -31,7 +31,7 @@ export default function NavBar() {
         }}
       >
         <Toolbar sx={{ gap: 2 }}>
-          {routes.map((route) => (
+          {navRouters.map((route) => (
             <Button
               key={route.path + route.label}
               component={Link}
