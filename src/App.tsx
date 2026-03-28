@@ -16,6 +16,7 @@ function App() {
     setDarkMode((prev) => !prev)
   }
 
+  // TODO: добавить после Routes Loader и ErrorModal
   return (
     <ColorModeContext.Provider value={{ toggleTheme }}>
       <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
