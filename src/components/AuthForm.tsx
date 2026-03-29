@@ -1,6 +1,6 @@
 import { Box, Button } from "@mui/material";
 
-export const AuthForm: React.FC<{
+export const CustomForm: React.FC<{
   onSubmit: () => void;
   children: React.ReactNode;
   buttonText: string,

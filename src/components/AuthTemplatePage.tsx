@@ -1,5 +1,5 @@
 import { useForm, type FieldValues, type Path, type RegisterOptions, type SubmitHandler } from "react-hook-form";
-import { AuthForm } from "./AuthForm";
+import { CustomForm } from "./AuthForm";
 import { InputTextField } from "./InputTextField";
 import { GridBackGroundLayout } from "./GridBackGroundLayout";
 import { Typography } from "@mui/material";
@@ -30,7 +30,7 @@ export default function AuthTemplatePage<T extends FieldValues>({ title, fields,
       <Typography variant="h3" sx={{ padding: 1 }}>
         {title}
       </Typography>
-      <AuthForm onSubmit={handleSubmit(onSubmit)} buttonText={buttonText}>
+      <CustomForm onSubmit={handleSubmit(onSubmit)} buttonText={buttonText}>
         {fields.map((field) => (
           <InputTextField
             label={field.label}
@@ -42,7 +42,7 @@ export default function AuthTemplatePage<T extends FieldValues>({ title, fields,
             helperText={errors[field.name]?.message as string}
           />
         ))}
-      </AuthForm>
+      </CustomForm>
     </GridBackGroundLayout>
   );
 }
