@@ -1,14 +1,18 @@
 import { useForm, type FieldValues, type Path, type RegisterOptions, type SubmitHandler } from "react-hook-form";
-import { CustomForm } from "./AuthForm";
+import { CustomForm } from "./CustomForm";
 import { InputTextField } from "./InputTextField";
 import { GridBackGroundLayout } from "./GridBackGroundLayout";
 import { Typography } from "@mui/material";
+import { Link } from "react-router-dom";
 
 type AuthTemplatePageProps<T extends FieldValues> = {
   title: string;
   fields: AuthFieldConfig<T>[];
   onSubmit: SubmitHandler<T>;
-  buttonText: string;
+  submitButtonText: string;
+  switchText: string;
+  switchLinkText: string;
+  switchTo: string;
 }
 
 export type AuthFieldConfig<T extends FieldValues> = {
@@ -18,19 +22,28 @@ export type AuthFieldConfig<T extends FieldValues> = {
   rules: RegisterOptions<T>,
 }
 
-export default function AuthTemplatePage<T extends FieldValues>({ title, fields, onSubmit, buttonText }: AuthTemplatePageProps<T>) {
+export default function AuthTemplatePage<T extends FieldValues>({
+  title,
+  fields,
+  onSubmit,
+  submitButtonText,
+  switchTo,
+  switchText,
+  switchLinkText
+}: AuthTemplatePageProps<T>) {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<T>();
 
+
   return (
     <GridBackGroundLayout>
       <Typography variant="h3" sx={{ padding: 1 }}>
         {title}
       </Typography>
-      <CustomForm onSubmit={handleSubmit(onSubmit)} buttonText={buttonText}>
+      <CustomForm onSubmit={handleSubmit(onSubmit)} buttonText={submitButtonText}>
         {fields.map((field) => (
           <InputTextField
             label={field.label}
@@ -43,6 +56,10 @@ export default function AuthTemplatePage<T extends FieldValues>({ title, fields,
           />
         ))}
       </CustomForm>
-    </GridBackGroundLayout>
+      <Typography sx={{ mt: 2 }}>
+        {switchText}{" "}
+        <Link to={switchTo} >{switchLinkText}</Link>
+      </Typography>
+    </GridBackGroundLayout >
   );
 }

@@ -27,12 +27,17 @@ export default function Login() {
   };
 
   return (
-    <AuthTemplatePage
-      title="Вход"
-      fields={fields}
-      onSubmit={onSubmit}
-      buttonText="Войти в аккаунт"
-    />
+    <>
+      <AuthTemplatePage
+        title="Вход"
+        fields={fields}
+        onSubmit={onSubmit}
+        submitButtonText="Войти в аккаунт"
+        switchTo="/register"
+        switchLinkText="Зарегистрироваться"
+        switchText="Нет аккаунта?"
+      />
+    </>
   );
 }
 

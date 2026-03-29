@@ -19,7 +19,6 @@ export const CustomForm: React.FC<{
         variant="contained"
         sx={{
           mt: 2,
-          marginBottom: 7
         }}
       >
         {buttonText}

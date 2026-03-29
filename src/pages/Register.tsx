@@ -8,12 +8,17 @@ export default function Register() {
   };
 
   return (
-    <AuthTemplatePage
-      title="Регистрация"
-      fields={fields}
-      onSubmit={onSubmit}
-      buttonText="Создать аккаунт"
-    />
+    <>
+      <AuthTemplatePage
+        title="Регистрация"
+        fields={fields}
+        onSubmit={onSubmit}
+        submitButtonText="Создать аккаунт"
+        switchTo="/login"
+        switchLinkText="Войти"
+        switchText="Есть аккаунт?"
+      />
+    </>
   );
 }
 
