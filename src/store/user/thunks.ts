@@ -6,15 +6,58 @@ export const login = createAsyncThunk(
   "user/login",
   async (data: { email: string; password: string }, { rejectWithValue }) => {
     try {
-      const tokens = await api.post("Auth/Login", data)
+      const tokens = await api.post("Auth/Login", data);
+
+      sessionStorage.setItem("refreshToken", tokens.data.refreshToken);
 
       return {
         user: null,
         accessToken: tokens.data.accessToken,
-        refreshToken: tokens.data.refreshToken
       }
     } catch (e: any) {
       return rejectWithValue(e.response?.data?.message || "Login error")
     }
   }
 )
+
+export const register = createAsyncThunk(
+  "user/register",
+  async (data: {
+    firstName: string;
+    secondName: string;
+    email: string;
+    password: string
+  }, { rejectWithValue }) => {
+    try {
+      const tokens = await api.post("Auth/Registration", data);
+
+      sessionStorage.setItem("refreshToken", tokens.data.refreshToken);
+
+      return {
+        user: null,
+        accessToken: tokens.data.accessToken,
+      }
+    } catch (e: any) {
+      return rejectWithValue(e.response?.data?.message || "Registration error")
+    }
+  }
+)
+
+// export const refreshThunk = createAsyncThunk(
+//   "user/refresh",
+//   async ({ }, { rejectWithValue }) => {
+//     try {
+//       const oldRefreshToken = sessionStorage.getItem("refreshToken");
+//       const tokens = await api.put("Auth/RefreshTokens", oldRefreshToken);
+//
+//       sessionStorage.setItem("refreshToken", tokens.data.refreshToken);
+//
+//       return {
+//         user: null,
+//         accessToken: tokens.data.accessToken,
+//       }
+//     } catch (e: any) {
+//       return rejectWithValue(e.response?.data?.message || "Refresh error")
+//     }
+//   }
+// )

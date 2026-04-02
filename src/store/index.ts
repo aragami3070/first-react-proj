@@ -2,6 +2,8 @@ import { configureStore } from "@reduxjs/toolkit";
 import userReducer from "./user/slice"
 import { useDispatch } from "react-redux";
 
+// TODO: добавить appReducer
+// TODO: добавить quotesReducer
 export const store = configureStore({
   reducer: {
     user: userReducer,

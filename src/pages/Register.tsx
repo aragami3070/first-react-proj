@@ -1,10 +1,29 @@
 import type { SubmitHandler } from "react-hook-form";
 import type { AuthFieldConfig } from "../components/AuthTemplatePage";
 import AuthTemplatePage from "../components/AuthTemplatePage";
+import { useAppDispatch, type RootState } from "../store";
+import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import { register } from "../store/user";
 
 export default function Register() {
-  const onSubmit: SubmitHandler<RegisterFormValues> = (data: RegisterFormValues) => {
-    console.log(data);
+  const dispatch = useAppDispatch();
+  const isAuth = useSelector((state: RootState) => state.user.isAuth);
+  const isUserLoading = useSelector((state: RootState) => state.user.isUserLoading);
+
+  useEffect(() => {
+    if (isAuth && !isUserLoading) {
+      console.log("User logged in, but not loading");
+      console.log("Loading user");
+    }
+  }, [isAuth])
+  const onSubmit: SubmitHandler<RegisterFormValues> = async (data: RegisterFormValues) => {
+    await dispatch(register({
+      firstName: data.firstName,
+      secondName: data.secondName,
+      email: data.email,
+      password: data.password
+    }))
   };
 
   return (
