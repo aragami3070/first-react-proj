@@ -1,8 +1,8 @@
 import { Button, SvgIcon, Typography, useTheme } from "@mui/material";
 import Icon from "../assets/icon.svg?react"
 import { Link } from "react-router-dom";
-import { CenterFullScreenLayout } from "../components/CenterFullScreenLayout";
-import { GridBackGroundLayout } from "../components/GridBackGroundLayout";
+import { CenterFullScreenLayout } from "../ui/CenterFullScreenLayout";
+import { GridBackGroundLayout } from "../ui/GridBackGroundLayout";
 
 export default function Home() {
 

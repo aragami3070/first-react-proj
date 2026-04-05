@@ -1,7 +1,7 @@
 import { useForm, type FieldValues, type Path, type RegisterOptions, type SubmitHandler } from "react-hook-form";
-import { CustomForm } from "./CustomForm";
-import { InputTextField } from "./InputTextField";
-import { GridBackGroundLayout } from "./GridBackGroundLayout";
+import { CustomForm } from "../ui/CustomForm";
+import { InputTextField } from "../ui/InputTextField";
+import { GridBackGroundLayout } from "../ui/GridBackGroundLayout";
 import { Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 
