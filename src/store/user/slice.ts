@@ -51,4 +51,5 @@ const userSlice = createSlice({
   }
 })
 
+export const { logoutLocal } = userSlice.actions;
 export default userSlice.reducer;

@@ -29,6 +29,7 @@ export const register = createAsyncThunk(
     password: string
   }, { rejectWithValue }) => {
     try {
+      console.log(data)
       const tokens = await api.post("Auth/Registration", data);
 
       sessionStorage.setItem("refreshToken", tokens.data.refreshToken);
@@ -42,22 +43,3 @@ export const register = createAsyncThunk(
     }
   }
 )
-
-// export const refreshThunk = createAsyncThunk(
-//   "user/refresh",
-//   async ({ }, { rejectWithValue }) => {
-//     try {
-//       const oldRefreshToken = sessionStorage.getItem("refreshToken");
-//       const tokens = await api.put("Auth/RefreshTokens", oldRefreshToken);
-//
-//       sessionStorage.setItem("refreshToken", tokens.data.refreshToken);
-//
-//       return {
-//         user: null,
-//         accessToken: tokens.data.accessToken,
-//       }
-//     } catch (e: any) {
-//       return rejectWithValue(e.response?.data?.message || "Refresh error")
-//     }
-//   }
-// )
