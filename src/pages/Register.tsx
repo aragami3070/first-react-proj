@@ -1,7 +1,8 @@
 import type { SubmitHandler } from "react-hook-form";
 import type { AuthFieldConfig } from "../components/AuthTemplatePage";
 import AuthTemplatePage from "../components/AuthTemplatePage";
-import { useAppDispatch, type RootState } from "../store";
+import { type RootState } from "../store";
+import { useAppDispatch } from "../store/hooks";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
 import { register } from "../store/user";
