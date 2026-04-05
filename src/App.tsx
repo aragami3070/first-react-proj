@@ -4,6 +4,7 @@ import { routes } from "./routes";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { darkTheme, lightTheme } from "./theme";
 import { createContext, useEffect, useState } from "react";
+import { AuthWrapper } from "./components/wrappers/AuthWrapper";
 
 export const ColorModeContext = createContext({
   toggleTheme: () => { }
@@ -35,7 +36,17 @@ function App() {
         <CssBaseline />
         <NavBar />
         <Routes>
-          {routes.map(router => <Route key={router.path + router.label} path={router.path} element={router.element} />)}
+          {routes
+            .map(router =>
+              <Route
+                key={router.path}
+                path={router.path}
+                element={
+                  router.isPrivate
+                    ? <AuthWrapper>{router.element}</AuthWrapper>
+                    : router.element
+                } />
+            )}
         </Routes>
       </ThemeProvider>
     </ColorModeContext.Provider>

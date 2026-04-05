@@ -5,9 +5,11 @@ import { useContext } from "react";
 import { ColorModeContext } from "../App";
 import LightModeIcon from "@mui/icons-material/LightMode"
 import DarkModeIcon from "@mui/icons-material/LightMode"
+import { useAppSelector } from "../store/hooks";
 
 export default function NavBar() {
   const { toggleTheme } = useContext(ColorModeContext);
+  const isAuth = useAppSelector((state) => state.user.isAuth);
 
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
@@ -31,7 +33,9 @@ export default function NavBar() {
         }}
       >
         <Toolbar sx={{ gap: 2 }}>
-          {navRouters.map((route) => (
+          {navRouters
+            .filter((route) => !route.isPrivate || isAuth)
+            .map((route) => (
             <Button
               key={route.path + route.label}
               component={Link}
