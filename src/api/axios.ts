@@ -1,5 +1,8 @@
 import axios from "axios";
 import type { AxiosInstance } from "axios";
+import { setError } from "../store/settings";
+import { getErrorMessage } from "../utils/errorTemplateMessage";
+import { logoutLocal } from "../store/user";
 
 const api: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -20,6 +23,43 @@ export const setupInterceptors = (store: any) => {
     return config;
   });
 
+  api.interceptors.response.use(
+    (res) => res,
+    async (error) => {
+      const originalRequest = error.config;
+
+      // NOTE: попытка обновить accessToken и сделать запрос снова
+      if (error.response?.status === 401 && !originalRequest._retry) {
+        originalRequest._retry = true;
+        const refreshToken = sessionStorage.getItem("refreshToken");
+
+        try {
+          const res = await api.post("Auth/RefreshAllTokens", { refreshToken });
+
+          store.dispatch({
+            type: "user/refresh",
+            payload: res.data.accessToken,
+          });
+
+          sessionStorage.setItem("refreshToken", res.data.refreshToken);
+
+          // повторяем запрос с новым accessToken
+          originalRequest.headers.Authorization = `Bearer ${res.data.accessToken}`;
+          return api(originalRequest);
+        } catch (e) {
+          store.dispatch(logoutLocal())
+          store.dispatch(setError("Сессия истекла. Зайдите заново"));
+        }
+      }
+      const message = error.response?.data?.message || getErrorMessage(error.response?.status);
+
+      if (error.response?.status !== 401) {
+        store.dispatch(setError(message));
+      }
+
+      return Promise.reject(error);
+    }
+  );
 };
 
 export default api;
