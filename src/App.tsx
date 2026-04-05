@@ -3,17 +3,29 @@ import NavBar from "./components/NavBar";
 import { routes } from "./routes";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { darkTheme, lightTheme } from "./theme";
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 
 export const ColorModeContext = createContext({
   toggleTheme: () => { }
 })
 
 function App() {
-  const [darkMode, setDarkMode] = useState(true);
+  // Загружаем из localStorage при старте, по умолчанию true (dark)
+  const [darkMode, setDarkMode] = useState(() => {
+    try {
+      const saved = localStorage.getItem('darkMode');
+      return saved ? JSON.parse(saved) : true;
+    } catch {
+      return true;
+    }
+  });
+
+  useEffect(() => {
+    localStorage.setItem('darkMode', JSON.stringify(darkMode));
+  }, [darkMode]);
 
   const toggleTheme = () => {
-    setDarkMode((prev) => !prev)
+    setDarkMode((prev: boolean) => !prev)
   }
 
   // TODO: добавить после Routes Loader и ErrorModal
