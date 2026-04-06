@@ -37,7 +37,7 @@ export default function NavBar() {
             .filter((route) => !route.isPrivate || isAuth)
             .map((route) => (
             <Button
-              key={route.path + route.label}
+              key={route.path}
               component={Link}
               to={route.path}
               sx={{
