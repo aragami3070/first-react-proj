@@ -1,7 +1,8 @@
 import { useForm, type RegisterOptions, type SubmitHandler } from "react-hook-form";
 import { CustomForm } from "../ui/CustomForm";
 import { InputTextField } from "../ui/InputTextField";
-
+import { GridBackGroundLayout } from "../ui/GridBackGroundLayout";
+import { Typography } from "@mui/material";
 
 export default function CreateQuote() {
   const {
@@ -9,41 +10,61 @@ export default function CreateQuote() {
     handleSubmit,
     formState: { errors },
   } = useForm<QuoteFormValue>();
-  const onSubmit: SubmitHandler<QuoteFormValue> = async (data: QuoteFormValue) => {
+
+  const onSubmit: SubmitHandler<QuoteFormValue> = async (data) => {
+    console.log(data);
   };
+
   return (
-    <CustomForm onSubmit={handleSubmit(onSubmit)} buttonText="Aboba">
-      <InputTextField
-        label={"Введите цитату:"}
-        type={"text"}
-        key={"quote"}
-        margin="normal"
-        {...register("text", {
-          required: "Введите цитату"
-        })}
-      />
-    </CustomForm >
+    <GridBackGroundLayout>
+      <Typography variant="h3" sx={{ padding: 1 }}>
+        Добавьте вашу любимую цитату!
+      </Typography>
+      <CustomForm onSubmit={handleSubmit(onSubmit)} buttonText="Создать цитату">
+        {fields.map((field) => (
+          <InputTextField
+            key={field.name}
+            label={field.label}
+            type={field.type}
+            margin="normal"
+            {...register(field.name, field.rules)}
+            error={!!errors[field.name]}
+            helperText={errors[field.name]?.message as string}
+            multiline
+            minRows={6}
+            maxRows={10}
+            sx={{
+              width: "calc(100% + 200px)",
+            }}
+          />
+        ))}
+      </CustomForm>
+    </GridBackGroundLayout>
   );
 }
-        // error={!!errors[field.name] }
-        // helperText={errors[field.name]?.message as string}
-//
+
 type QuoteFormValue = {
   text: string;
 };
 
 type QuoteFormField = {
-  name: string,
-  label: string,
-  type: string,
-  rules: RegisterOptions<QuoteFormValue>,
-}
+  name: keyof QuoteFormValue;
+  label: string;
+  type: string;
+  rules: RegisterOptions<QuoteFormValue>;
+};
 
-const field: QuoteFormField = {
-  name: "quote",
-  label: "Введите цитату",
-  type: "text",
-  rules: {
-    required: "Введите ",
+const fields: QuoteFormField[] = [
+  {
+    name: "text",
+    label: "Введите цитату",
+    type: "text",
+    rules: {
+      required: "Введите цитату",
+      minLength: {
+        value: 3,
+        message: "Минимум 3 символа",
+      },
+    },
   },
-  }
+];

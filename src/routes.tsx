@@ -1,3 +1,4 @@
+import CreateQuote from "./pages/CreateQuote"
 import Home from "./pages/Home"
 import Login from "./pages/Login"
 import Profile from "./pages/Profile"
@@ -14,6 +15,7 @@ export interface RouteConfig {
 export const navRouters: RouteConfig[] = [
   { label: "Главная", path: "/", element: <Home /> },
   { label: "Профиль", path: "/profile", element: <Profile />, isPrivate: true },
+  { label: "Создать цитату", path: "/create-quote", element: <CreateQuote />, isPrivate: true },
 ]
 
 export const routes: RouteConfig[] = [
