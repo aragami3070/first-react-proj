@@ -1,30 +1,30 @@
 import type { SubmitHandler } from "react-hook-form";
-import { useSelector } from "react-redux";
-import { useEffect } from "react";
-import { login } from "../store/user";
-import { type RootState } from "../store";
+import { getMe, login } from "../store/user";
 import { useAppDispatch } from "../store/hooks";
 import type { AuthFieldConfig } from "../components/AuthTemplatePage";
 import AuthTemplatePage from "../components/AuthTemplatePage";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import type { RootState } from "../store";
 
-// TODO: после успешного Login делать getMe, которая стучится на профиль и выдает User
 export default function Login() {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
   const isAuth = useSelector((state: RootState) => state.user.isAuth);
   const isUserLoading = useSelector((state: RootState) => state.user.isUserLoading);
 
-  useEffect(() => {
-    if (isAuth && !isUserLoading) {
-      console.log("User logged in, but not loading");
-      console.log("Loading user");
-    }
-  }, [isAuth])
-
-  const onSubmit: SubmitHandler<LoginFormValues> = async (data: LoginFormValues) => {
+  const onSubmit: SubmitHandler<LoginFormValues> = async (data) => {
     await dispatch(login({
       email: data.email,
       password: data.password
-    }))
+    }));
+
+    await dispatch(getMe());
+
+    if (isAuth && isUserLoading) {
+      navigate("/profile")
+    }
   };
 
   return (

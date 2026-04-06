@@ -4,20 +4,15 @@ import AuthTemplatePage from "../components/AuthTemplatePage";
 import { type RootState } from "../store";
 import { useAppDispatch } from "../store/hooks";
 import { useSelector } from "react-redux";
-import { useEffect } from "react";
-import { register } from "../store/user";
+import { getMe, register } from "../store/user";
+import { useNavigate } from "react-router-dom";
 
 export default function Register() {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const isAuth = useSelector((state: RootState) => state.user.isAuth);
   const isUserLoading = useSelector((state: RootState) => state.user.isUserLoading);
 
-  useEffect(() => {
-    if (isAuth && !isUserLoading) {
-      console.log("User logged in, but not loading");
-      console.log("Loading user");
-    }
-  }, [isAuth])
   const onSubmit: SubmitHandler<RegisterFormValues> = async (data: RegisterFormValues) => {
     await dispatch(register({
       firstName: data.firstName,
@@ -25,6 +20,12 @@ export default function Register() {
       email: data.email,
       password: data.password
     }))
+
+    await dispatch(getMe());
+
+    if (isAuth && isUserLoading) {
+      navigate("/profile")
+    }
   };
 
   return (
