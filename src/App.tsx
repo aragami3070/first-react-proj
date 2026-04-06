@@ -7,6 +7,7 @@ import { createContext, useEffect, useState } from "react";
 import { ErrorModal } from "./components/ErrorModal";
 import { AuthWrapper } from "./components/wrappers/AuthWrapper";
 import { GuestWrapper } from "./components/wrappers/GuestWrapper";
+import { CommonWrapper } from "./components/wrappers/CommonWrapper";
 
 export const ColorModeContext = createContext({
   toggleTheme: () => { }
@@ -48,6 +49,7 @@ function App() {
               } else if (router.isGuest) {
                 element = <GuestWrapper>{element}</GuestWrapper>
               }
+              element = <CommonWrapper>{element}</CommonWrapper>
               return (
                 <Route
                   key={router.path}
