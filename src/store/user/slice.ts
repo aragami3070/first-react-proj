@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit"
 import type { UserState } from "./types"
-import { login, register } from "./thunks"
+import { getMe, login, register } from "./thunks"
 
 const initialState: UserState = {
   user: null,
@@ -22,7 +22,7 @@ const userSlice = createSlice({
     }
   },
   extraReducers: (builder) => {
-    // LOGIN
+    // Login
     builder.addCase(login.fulfilled, (state, action) => {
       state.user = null;
       state.accessToken = action.payload.accessToken;
@@ -35,6 +35,7 @@ const userSlice = createSlice({
       state.isUserLoading = false;
     })
 
+    // Registeration
     builder.addCase(register.fulfilled, (state, action) => {
       state.user = null;
       state.accessToken = action.payload.accessToken;
@@ -47,7 +48,17 @@ const userSlice = createSlice({
       state.isUserLoading = false;
     })
 
+    // Profile
+    builder.addCase(getMe.fulfilled, (state, action) => {
+      state.user = action.payload.user;
+      state.isUserLoading = true;
+    })
 
+    builder.addCase(getMe.rejected, (state) => {
+      state.user = null;
+      state.isUserLoading = false;
+      state.isAuth = false;
+    })
   }
 })
 

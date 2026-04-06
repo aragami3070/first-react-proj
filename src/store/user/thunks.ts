@@ -1,11 +1,14 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { mapUser } from "../../entities/user/types";
 import api from "../../api/axios";
+import { startLoading, stopLoading } from "../settings";
+import type { AxiosError } from "axios";
+import type { ApiError } from "../../api/type";
 
 export const login = createAsyncThunk(
   "user/login",
-  async (data: { email: string; password: string }, { rejectWithValue }) => {
+  async (data: { email: string; password: string }, { rejectWithValue, dispatch }) => {
     try {
+      dispatch(startLoading())
       const tokens = await api.post("Auth/Login", data);
 
       sessionStorage.setItem("refreshToken", tokens.data.refreshToken);
@@ -15,7 +18,11 @@ export const login = createAsyncThunk(
         accessToken: tokens.data.accessToken,
       }
     } catch (e: any) {
-      return rejectWithValue(e.response?.data?.message || "Login error")
+      const error = e as AxiosError<ApiError>;
+      return rejectWithValue(error.response?.data.message)
+    }
+    finally {
+      dispatch(stopLoading())
     }
   }
 )
@@ -29,7 +36,6 @@ export const register = createAsyncThunk(
     password: string
   }, { rejectWithValue }) => {
     try {
-      console.log(data)
       const tokens = await api.post("Auth/Registration", data);
 
       sessionStorage.setItem("refreshToken", tokens.data.refreshToken);
@@ -39,7 +45,28 @@ export const register = createAsyncThunk(
         accessToken: tokens.data.accessToken,
       }
     } catch (e: any) {
-      return rejectWithValue(e.response?.data?.message || "Registration error")
+      const error = e as AxiosError<ApiError>;
+      return rejectWithValue(error.response?.data.message)
+    }
+  }
+)
+
+export const getMe = createAsyncThunk(
+  "user/getMe",
+  async (_, { rejectWithValue, dispatch }) => {
+    try {
+      dispatch(startLoading())
+      const user = await api.get("User/myprofile");
+
+      return {
+        user: user.data,
+      }
+    } catch (e: any) {
+      const error = e as AxiosError<ApiError>;
+      return rejectWithValue(error.response?.data.message)
+    }
+    finally {
+      dispatch(stopLoading())
     }
   }
 )
