@@ -12,12 +12,12 @@ export interface RouteConfig {
 }
 
 export const navRouters: RouteConfig[] = [
-  { label: "Home", path: "/", element: <Home /> },
-  { label: "Profile", path: "/profile", element: <Profile />, isPrivate: true },
+  { label: "Главная", path: "/", element: <Home /> },
+  { label: "Профиль", path: "/profile", element: <Profile />, isPrivate: true },
 ]
 
 export const routes: RouteConfig[] = [
-  { label: "register", path: "/register", element: <Register />, isGuest: true },
-  { label: "login", path: "/login", element: <Login />, isGuest: true },
+  { label: "Регистрация", path: "/register", element: <Register />, isGuest: true },
+  { label: "Вход", path: "/login", element: <Login />, isGuest: true },
   ...navRouters
 ]
