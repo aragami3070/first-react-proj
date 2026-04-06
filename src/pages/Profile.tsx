@@ -11,7 +11,7 @@ import {
 import { useSelector, useDispatch } from "react-redux"
 import { type RootState } from "../store"
 import { logoutLocal } from "../store/user"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { GridBackGroundLayout } from "../ui/GridBackGroundLayout"
 
 export default function Profile() {
@@ -42,7 +42,6 @@ export default function Profile() {
           }}
         >
           <CardContent>
-            {/* Аватар */}
             <Box
               display="flex"
               flexDirection="column"
@@ -64,32 +63,32 @@ export default function Profile() {
 
             <Divider sx={{ my: 2 }} />
 
-            {/* Данные */}
             <Box>
-              <Typography variant="body1">
+              <Typography>
                 <b>ID:</b> {user.id}
               </Typography>
 
-              <Typography variant="body1">
+              <Typography>
                 <b>Имя:</b> {user.firstName}
               </Typography>
 
-              <Typography variant="body1">
+              <Typography>
                 <b>Фамилия:</b> {user.secondName}
               </Typography>
 
-              <Typography variant="body1">
-                <b>Email:</b> {user.email}
+              <Typography>
+                <b>Почта:</b> {user.email}
               </Typography>
             </Box>
 
             <Divider sx={{ my: 2 }} />
 
-            {/* Кнопки */}
             <Box display="flex" justifyContent="space-between">
               <Button
-                variant="outlined"
-                onClick={() => navigate("/")}
+                variant="contained"
+                key={"/"}
+                component={Link}
+                to={"/"}
               >
                 На главную
               </Button>
