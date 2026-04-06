@@ -9,3 +9,7 @@ export interface RetryAxiosRequestConfig extends InternalAxiosRequestConfig {
 export type AppStore = Store<RootState> & {
   dispatch: AppDispatch;
 };
+
+export type ApiError = {
+  message?: string;
+}

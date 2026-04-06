@@ -4,5 +4,7 @@ export function getErrorMessage(status: number) {
     case 404: return "Данные не найденны, увы. Повторите запрос позже"
     case 409: return "Почта уже занята"
     case 422: return "Неправильные данные"
+    case 500: return "Технические шоколадки на сервере"
+    default: return "Неизвестаная ошибка"
   }
 }

@@ -1,9 +1,9 @@
 import axios from "axios";
-import type { AxiosInstance } from "axios";
+import type { AxiosError, AxiosInstance } from "axios";
 import { setError } from "../store/settings";
 import { getErrorMessage } from "../utils/errorTemplateMessage";
 import { logoutLocal } from "../store/user";
-import type { AppStore, RetryAxiosRequestConfig } from "./type";
+import type { ApiError, AppStore, RetryAxiosRequestConfig } from "./type";
 
 const api: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -25,7 +25,7 @@ export const setupInterceptors = (store: AppStore) => {
 
   api.interceptors.response.use(
     (res) => res,
-    async (error) => {
+    async (error: AxiosError<ApiError>) => {
       const originalRequest = error.config as RetryAxiosRequestConfig;
 
       // NOTE: попытка обновить accessToken и сделать запрос снова
@@ -51,9 +51,8 @@ export const setupInterceptors = (store: AppStore) => {
           store.dispatch(setError("Сессия истекла. Зайдите заново"));
         }
       }
-      const message
-        = (error.response?.data as { message?: string })?.message
-          ?? getErrorMessage(error.response?.status ?? -1);
+      const message = error.response?.data.message
+        ?? getErrorMessage(error.response?.status ?? -1);
 
       if (error.response?.status !== 401) {
         store.dispatch(setError(message));
