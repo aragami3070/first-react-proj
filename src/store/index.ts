@@ -1,6 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import userReducer from "./user/slice"
 import settingsReducer from "./settings/slice"
+import quoteReducer from "./quote/slice"
 
 // TODO: добавить appReducer
 // TODO: добавить quotesReducer
@@ -8,7 +9,7 @@ export const store = configureStore({
   reducer: {
     user: userReducer,
     settings: settingsReducer,
-    // quotes: quotesReducer,
+    quotes: quoteReducer,
   }
 })
 
