@@ -34,8 +34,9 @@ export const register = createAsyncThunk(
     secondName: string;
     email: string;
     password: string
-  }, { rejectWithValue }) => {
+  }, { rejectWithValue, dispatch }) => {
     try {
+      dispatch(startLoading())
       const tokens = await api.post("Auth/Registration", data);
 
       sessionStorage.setItem("refreshToken", tokens.data.refreshToken);
@@ -47,6 +48,9 @@ export const register = createAsyncThunk(
     } catch (e: any) {
       const error = e as AxiosError<ApiError>;
       return rejectWithValue(error.response?.data.message)
+    }
+    finally {
+      dispatch(stopLoading())
     }
   }
 )

@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit"
 import type { UserState } from "./types"
 import { getMe, login, register } from "./thunks"
 
@@ -19,6 +19,9 @@ const userSlice = createSlice({
       state.isAuth = false;
       state.isUserLoading = false;
       sessionStorage.removeItem("refreshToken");
+    },
+    refresh: ( state, action: PayloadAction<{ accessToken: string }>) => {
+      state.accessToken = action.payload.accessToken;
     }
   },
   extraReducers: (builder) => {
@@ -62,5 +65,5 @@ const userSlice = createSlice({
   }
 })
 
-export const { logoutLocal } = userSlice.actions;
+export const { logoutLocal, refresh } = userSlice.actions;
 export default userSlice.reducer;
