@@ -13,10 +13,10 @@ export const QuoteCard = ({ quote }: { quote: Quote }) => {
     >
       <CardContent sx={{ width: "100%" }}>
         <Typography
-          variant="body1"
+          variant="h5"
           sx={{
             color: "text.primary",
-            mb: 2,
+            mb: 6,
             wordBreak: "break-word",
           }}
         >
@@ -24,11 +24,11 @@ export const QuoteCard = ({ quote }: { quote: Quote }) => {
         </Typography>
 
         <Box display="flex" justifyContent="space-between">
-          <Typography variant="body2" color="secondary">
+          <Typography variant="body1" color="secondary">
             {quote.username}
           </Typography>
 
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body1" color="text.secondary">
             {new Date(quote.creationDate).toLocaleDateString()}
           </Typography>
         </Box>
