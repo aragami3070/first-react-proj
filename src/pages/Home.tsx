@@ -1,8 +1,8 @@
 import { Button, SvgIcon, Typography, useTheme } from "@mui/material";
 import Icon from "../assets/icon.svg?react"
 import { Link } from "react-router-dom";
-import { CenterFullScreenLayout } from "../ui/CenterFullScreenLayout";
 import { GridBackGroundLayout } from "../ui/GridBackGroundLayout";
+import { Img } from "../ui/Img";
 
 export default function Home() {
 
@@ -35,17 +35,20 @@ export default function Home() {
         </Button>
       </GridBackGroundLayout>
 
-      <CenterFullScreenLayout sx={{ minWidth: '100vw' }}>
-        <Typography variant="h2" sx={{ padding: 2 }}>
-          Какие-то скрины
-        </Typography>
-      </CenterFullScreenLayout>
 
-      <CenterFullScreenLayout sx={{ minWidth: '100vw' }}>
+      <GridBackGroundLayout sx={{ minWidth: '100vw' }}>
         <Typography variant="h2" sx={{ padding: 2 }}>
-          Какие-то скрины
+          Лента цитат
         </Typography>
-      </CenterFullScreenLayout>
+        <Img src={"feed.png"} />
+      </GridBackGroundLayout>
+
+      <GridBackGroundLayout sx={{ minWidth: '100vw' }}>
+        <Typography variant="h2" sx={{ padding: 2 }}>
+          Лучшие цитаты
+        </Typography>
+        <Img src={"best-random.png"} />
+      </GridBackGroundLayout>
     </>
   );
 }

@@ -1,4 +1,3 @@
-// pages/QuotesPage.tsx
 import { useEffect } from "react";
 import { Box, Pagination, Stack } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
