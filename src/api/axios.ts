@@ -2,7 +2,7 @@ import axios from "axios";
 import type { AxiosError, AxiosInstance } from "axios";
 import { setError } from "../store/settings";
 import { getErrorMessage } from "../utils/errorTemplateMessage";
-import { logoutLocal } from "../store/user";
+import { logoutLocal, refresh } from "../store/user";
 import type { ApiError, AppStore, RetryAxiosRequestConfig } from "./type";
 
 const api: AxiosInstance = axios.create({
@@ -31,22 +31,18 @@ export const setupInterceptors = (store: AppStore) => {
       // NOTE: попытка обновить accessToken и сделать запрос снова
       if (error.response?.status === 401 && !originalRequest._retry) {
         originalRequest._retry = true;
-        const refreshToken = sessionStorage.getItem("refreshToken");
+        const oldRefreshToken = sessionStorage.getItem("refreshToken");
 
         try {
-          const res = await api.post("Auth/RefreshAllTokens", { refreshToken });
+          const res = await api.post("Auth/RefreshAllTokens", null, { params: { oldRefreshToken } });
 
-          store.dispatch({
-            type: "user/refresh",
-            payload: res.data.accessToken,
-          });
-
+          store.dispatch(refresh(res.data.accessToken));
           sessionStorage.setItem("refreshToken", res.data.refreshToken);
 
           // повторяем запрос с новым accessToken
           originalRequest.headers.Authorization = `Bearer ${res.data.accessToken}`;
           return api(originalRequest);
-        } catch (e) {
+        } catch (e: any) {
           store.dispatch(logoutLocal())
           store.dispatch(setError("Сессия истекла. Зайдите заново"));
         }
