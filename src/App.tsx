@@ -8,6 +8,8 @@ import { ErrorModal } from "./components/ErrorModal";
 import { AuthWrapper } from "./components/wrappers/AuthWrapper";
 import { GuestWrapper } from "./components/wrappers/GuestWrapper";
 import { CommonWrapper } from "./components/wrappers/CommonWrapper";
+import { useAppDispatch } from "./store/hooks";
+import { getMe, initAuth } from "./store/user";
 
 export const ColorModeContext = createContext({
   toggleTheme: () => { }
@@ -23,6 +25,16 @@ function App() {
       return true;
     }
   });
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(initAuth());
+    if (sessionStorage.getItem("refreshToken")) {
+      dispatch(getMe());
+    }
+  }, [dispatch]);
+
+
 
   useEffect(() => {
     localStorage.setItem('darkMode', JSON.stringify(darkMode));
@@ -32,7 +44,6 @@ function App() {
     setDarkMode((prev: boolean) => !prev)
   }
 
-  // TODO: добавить после Routes Loader и ErrorModal
   return (
     <ColorModeContext.Provider value={{ toggleTheme }}>
       <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
