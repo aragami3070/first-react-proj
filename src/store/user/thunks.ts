@@ -3,6 +3,7 @@ import api from "../../api/axios";
 import { startLoading, stopLoading } from "../settings";
 import type { AxiosError } from "axios";
 import type { ApiError } from "../../api/type";
+import { authInitialized, logoutLocal, refresh } from ".";
 
 export const login = createAsyncThunk(
   "user/login",
@@ -74,3 +75,34 @@ export const getMe = createAsyncThunk(
     }
   }
 )
+export const initAuth = createAsyncThunk(
+  "user/initAuth",
+  async (_, { dispatch }) => {
+    dispatch(startLoading())
+    const oldRefreshToken = sessionStorage.getItem("refreshToken");
+
+    if (!oldRefreshToken) {
+      dispatch(authInitialized());
+      dispatch(stopLoading())
+      return;
+    }
+
+    try {
+      const res = await api.post<{ accessToken: string, refreshToken: string }>(
+        "Auth/RefreshAllTokens",
+        null,
+        { params: { oldRefreshToken } }
+      );
+
+      dispatch(refresh(res.data.accessToken));
+      sessionStorage.setItem("refreshToken", res.data.refreshToken);
+
+    } catch {
+      dispatch(logoutLocal());
+    }
+    finally {
+      dispatch(authInitialized());
+      dispatch(stopLoading())
+    }
+  }
+);

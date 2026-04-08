@@ -5,4 +5,5 @@ export type UserState = {
   accessToken: string | null,
   isAuth: boolean,
   isUserLoading: boolean,
+  isAuthInitialized: boolean
 }

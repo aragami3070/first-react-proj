@@ -6,7 +6,8 @@ const initialState: UserState = {
   user: null,
   accessToken: null,
   isAuth: false,
-  isUserLoading: false
+  isUserLoading: false,
+  isAuthInitialized: false
 }
 
 const userSlice = createSlice({
@@ -20,8 +21,13 @@ const userSlice = createSlice({
       state.isUserLoading = false;
       sessionStorage.removeItem("refreshToken");
     },
-    refresh: ( state, action: PayloadAction<{ accessToken: string }>) => {
-      state.accessToken = action.payload.accessToken;
+    refresh: (state, action: PayloadAction<string>) => {
+      state.accessToken = action.payload;
+      state.isAuth = true;
+      state.isAuthInitialized = true;
+    },
+    authInitialized: (state) => {
+      state.isAuthInitialized = true;
     }
   },
   extraReducers: (builder) => {
@@ -30,12 +36,14 @@ const userSlice = createSlice({
       state.user = null;
       state.accessToken = action.payload.accessToken;
       state.isAuth = true;
+      state.isAuthInitialized = true;
       state.isUserLoading = false;
     })
 
     builder.addCase(login.rejected, (state) => {
       state.isAuth = false;
       state.isUserLoading = false;
+      state.isAuthInitialized = false;
     })
 
     // Registeration
@@ -43,6 +51,7 @@ const userSlice = createSlice({
       state.user = null;
       state.accessToken = action.payload.accessToken;
       state.isAuth = true;
+      state.isAuthInitialized = true;
       state.isUserLoading = false;
     })
 
@@ -65,5 +74,5 @@ const userSlice = createSlice({
   }
 })
 
-export const { logoutLocal, refresh } = userSlice.actions;
+export const { logoutLocal, refresh, authInitialized } = userSlice.actions;
 export default userSlice.reducer;

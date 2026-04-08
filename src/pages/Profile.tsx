@@ -8,15 +8,15 @@ import {
   Divider,
   Button
 } from "@mui/material"
-import { useSelector, useDispatch } from "react-redux"
 import { type RootState } from "../store"
-import { logoutLocal } from "../store/user"
+import {  logoutLocal } from "../store/user"
 import { Link, useNavigate } from "react-router-dom"
 import { GridBackGroundLayout } from "../ui/GridBackGroundLayout"
+import { useAppDispatch, useAppSelector } from "../store/hooks"
 
 export default function Profile() {
-  const user = useSelector((state: RootState) => state.user.user)
-  const dispatch = useDispatch()
+  const user = useAppSelector((state: RootState) => state.user.user)
+  const dispatch = useAppDispatch()
   const navigate = useNavigate()
 
   if (!user) {
@@ -48,7 +48,14 @@ export default function Profile() {
               alignItems="center"
               mb={2}
             >
-              <Avatar sx={{ width: 80, height: 80, mb: 1 }}>
+              <Avatar sx={(theme) => {
+                return {
+                  width: 80,
+                  height: 80,
+                  mb: 1,
+                  background: theme.palette.secondary.main,
+                }
+              }}>
                 {user.firstName?.[0]}
               </Avatar>
 
