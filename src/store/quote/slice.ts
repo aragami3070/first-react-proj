@@ -6,7 +6,7 @@ const initialState: QuoteState = {
   quotes: [],
   randomQuote: null,
   offset: 0,
-  limit: 3,
+  limit: 10,
   total: 0,
 }
 
