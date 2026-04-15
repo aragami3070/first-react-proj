@@ -32,6 +32,7 @@ export const fetchQuotes = createAsyncThunk(
 
       dispatch(setQuotes({ quotes: res.data, offset }));
 
+      await dispatch(fetchQuotesCount());
       return res.data;
     }
     catch (e: any) {
