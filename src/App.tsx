@@ -8,8 +8,6 @@ import { ErrorModal } from "./components/ErrorModal";
 import { AuthWrapper } from "./components/wrappers/AuthWrapper";
 import { GuestWrapper } from "./components/wrappers/GuestWrapper";
 import { CommonWrapper } from "./components/wrappers/CommonWrapper";
-import { useAppDispatch } from "./store/hooks";
-import { getMe, initAuth } from "./store/user";
 
 export const ColorModeContext = createContext({
   toggleTheme: () => { }
@@ -25,16 +23,6 @@ function App() {
       return true;
     }
   });
-  const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    dispatch(initAuth());
-    if (sessionStorage.getItem("refreshToken")) {
-      dispatch(getMe());
-    }
-  }, [dispatch]);
-
-
 
   useEffect(() => {
     localStorage.setItem('darkMode', JSON.stringify(darkMode));
@@ -50,28 +38,48 @@ function App() {
         <CssBaseline />
         <NavBar />
         <ErrorModal />
-        <Routes>
-          {routes
-            .map((router) => {
-              let element = router.element
+        <CommonWrapper>
+          <Routes>
+            <Route>
+              {routes
+                .filter((router) =>
+                  router.isPrivate === undefined
+                  && router.isGuest === undefined)
+                .map((router) =>
+                  <Route
+                    key={router.path}
+                    path={router.path}
+                    element={router.element} />
 
-              if (router.isPrivate) {
-                element = <AuthWrapper>{element}</AuthWrapper>
-              } else if (router.isGuest) {
-                element = <GuestWrapper>{element}</GuestWrapper>
-              }
-              element = <CommonWrapper>{element}</CommonWrapper>
-              return (
-                <Route
-                  key={router.path}
-                  path={router.path}
-                  element={element} />
-              )
-            }
-            )}
-        </Routes>
+                )}
+            </Route>
+
+            <Route element={<GuestWrapper />}>
+              {routes
+                .filter((router) => router.isGuest === true)
+                .map((router) =>
+                  <Route
+                    key={router.path}
+                    path={router.path}
+                    element={router.element} />
+                )}
+            </Route>
+
+            <Route element={<AuthWrapper />}>
+              {routes
+                .filter((router) => router.isPrivate === true)
+                .map((router) =>
+                  <Route
+                    key={router.path}
+                    path={router.path}
+                    element={router.element} />
+
+                )}
+            </Route>
+          </Routes>
+        </CommonWrapper>
       </ThemeProvider>
-    </ColorModeContext.Provider>
+    </ColorModeContext.Provider >
   );
 }
 
