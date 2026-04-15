@@ -90,14 +90,29 @@ export const refresh = createAsyncThunk(
         { params: { oldRefreshToken } }
       );
 
-      dispatch(refresh(res.data.accessToken));
+      sessionStorage.setItem("accessToken", res.data.accessToken);
       sessionStorage.setItem("refreshToken", res.data.refreshToken);
 
     } catch {
       dispatch(logoutLocal());
     }
     finally {
-      dispatch(authInitialized());
+      dispatch(stopLoading())
+    }
+  }
+);
+
+export const refreshAuth = createAsyncThunk(
+  "user/refreshAuth",
+  async (_, { dispatch }) => {
+    dispatch(startLoading())
+    try {
+      await dispatch(refresh());
+      await dispatch(getMe());
+    } catch {
+      dispatch(logoutLocal());
+    }
+    finally {
       dispatch(stopLoading())
     }
   }
