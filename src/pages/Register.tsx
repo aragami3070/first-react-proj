@@ -11,7 +11,7 @@ export default function Register() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const isAuth = useSelector((state: RootState) => state.user.isAuth);
-  const isUserLoading = useSelector((state: RootState) => state.user.isUserLoading);
+  const isUserLoaded = useSelector((state: RootState) => state.user.isUserLoaded);
 
   const onSubmit: SubmitHandler<RegisterFormValues> = async (data: RegisterFormValues) => {
     await dispatch(register({
@@ -23,7 +23,7 @@ export default function Register() {
 
     await dispatch(getMe());
 
-    if (isAuth && isUserLoading) {
+    if (isAuth && isUserLoaded) {
       navigate("/profile")
     }
   };
