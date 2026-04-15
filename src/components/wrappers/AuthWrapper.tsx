@@ -1,17 +1,15 @@
-import type { ReactNode } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import type { RootState } from "../../store";
-import { useAppSelector } from "../../store/hooks";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { useEffect } from "react";
+import { refreshAuth } from "../../store/user";
 
-export const AuthWrapper = ({ children }: { children: ReactNode }) => {
-  const isAuth = useAppSelector((state: RootState) => state.user.isAuth);
-  const isAuthInitialized = useAppSelector((state: RootState) => state.user.isAuthInitialized)
-
-  if (!isAuthInitialized) return null;
+export const AuthWrapper = () => {
+  const { isAuth, isAuthInitialized } = useAppSelector((state: RootState) => state.user);
 
   if (!isAuth) {
     return <Navigate to="/login" replace />;
   }
 
-  return children;
+  return <Outlet />;
 };
