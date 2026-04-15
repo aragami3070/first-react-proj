@@ -24,14 +24,14 @@ export default function Home() {
         <Typography variant="h4" sx={{ padding: 2, paddingBottom: 8 }}>
           Ваши любимые мемные цитаты из фильмов и сериалов.
         </Typography>
-        <Button component={Link} to="/login" sx={{
+        <Button component={Link} to="/profile" sx={{
           borderRadius: "12px",
           px: 2.5,
           boxShadow: 3,
           color: theme.palette.text.primary,
           background: theme.palette.primary.main
         }}>
-          Войти, чтобы начать!
+          Начать!
         </Button>
       </GridBackGroundLayout>
 
