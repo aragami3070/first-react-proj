@@ -1,11 +1,12 @@
 import { useEffect } from "react";
 import { Box, Pagination, Stack } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { fetchQuotes, fetchQuotesCount } from "../store/quote/thunks";
+import { fetchQuotes } from "../store/quote/thunks";
 import { QuoteCard } from "../components/QuoteCard";
 import { GridBackGroundLayout } from "../ui/GridBackGroundLayout";
 
 
+// NOTE: сделать в контейнере который внутри себя скролится и пагинация поверх карточек
 export const QuotesPage = () => {
   const dispatch = useAppDispatch();
 
@@ -15,14 +16,15 @@ export const QuotesPage = () => {
   const pageCount = Math.ceil(total / limit);
 
   useEffect(() => {
-    dispatch(fetchQuotes({ offset: offset, limit: limit }));
-    dispatch(fetchQuotesCount());
+    const getQuotes = async () => {
+      await dispatch(fetchQuotes({ offset: offset, limit: limit }));
+    };
+    getQuotes()
   }, [dispatch]);
 
-  const handlePageChange = (_: React.ChangeEvent<unknown>, value: number) => {
+  const handlePageChange = async (_: React.ChangeEvent<unknown>, value: number) => {
     const newOffset = (value - 1) * limit;
-
-    dispatch(fetchQuotes({ offset: newOffset, limit }));
+    await dispatch(fetchQuotes({ offset: newOffset, limit }));
   };
 
   return (
@@ -30,7 +32,7 @@ export const QuotesPage = () => {
       <Stack
         spacing={3}
         alignItems="center"
-        sx={{ width: "100%", py: 4, mt: 10}}
+        sx={{ width: "100%", py: 4, mt: 10 }}
       >
         {quotes.map((quote, index) => (
           <QuoteCard key={index} quote={quote} />
