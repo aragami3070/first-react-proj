@@ -1,9 +1,9 @@
 import axios from "axios";
 import type { AxiosError, AxiosInstance } from "axios";
-import { setError } from "../store/settings";
 import { getErrorMessage } from "../utils/errorTemplateMessage";
-import { logoutLocal, refresh } from "../store/user";
-import type { ApiError, AppStore, RetryAxiosRequestConfig } from "./type";
+import type { ApiError, RetryAxiosRequestConfig } from "./type";
+import { dropError, unauthorized } from "../utils/dropError";
+import { refreshTokens } from "../utils/refreshLogic";
 
 const api: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -13,50 +13,43 @@ const api: AxiosInstance = axios.create({
   },
 });
 
-export const setupInterceptors = (store: AppStore) => {
-  api.interceptors.request.use((config) => {
-    const token = store.getState().user.accessToken;
+api.interceptors.request.use((config) => {
+  const token = sessionStorage.getItem("accessToken");
 
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  });
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
-  api.interceptors.response.use(
-    (res) => res,
-    async (error: AxiosError<ApiError>) => {
-      const originalRequest = error.config as RetryAxiosRequestConfig;
+api.interceptors.response.use(
+  (res) => res,
+  async (error: AxiosError<ApiError>) => {
+    const originalRequest = error.config as RetryAxiosRequestConfig;
 
-      // NOTE: попытка обновить accessToken и сделать запрос снова
-      if (error.response?.status === 401 && !originalRequest._retry) {
-        originalRequest._retry = true;
-        const oldRefreshToken = sessionStorage.getItem("refreshToken");
+    // NOTE: попытка обновить accessToken и сделать запрос снова
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
 
-        try {
-          const res = await api.post("Auth/RefreshAllTokens", null, { params: { oldRefreshToken } });
-
-          store.dispatch(refresh(res.data.accessToken));
-          sessionStorage.setItem("refreshToken", res.data.refreshToken);
-
-          // повторяем запрос с новым accessToken
-          originalRequest.headers.Authorization = `Bearer ${res.data.accessToken}`;
-          return api(originalRequest);
-        } catch (e: any) {
-          store.dispatch(logoutLocal())
-          store.dispatch(setError("Сессия истекла. Зайдите заново"));
-        }
+      try {
+        const newAccessToken = await refreshTokens();
+        // повторяем запрос с новым accessToken
+        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+        return api(originalRequest);
+      } catch (e: any) {
+        unauthorized()
       }
-      const message = error.response?.data.message
-        ?? getErrorMessage(error.response?.status ?? -1);
-
-      if (error.response?.status !== 401) {
-        store.dispatch(setError(message));
-      }
-
-      return Promise.reject(error);
     }
-  );
-};
+
+    const message = error.response?.data.message
+      ?? getErrorMessage(error.response?.status ?? -1);
+
+    if (error.response?.status !== 401) {
+      dropError(message)
+    }
+
+    return Promise.reject(error);
+  }
+);
 
 export default api;
