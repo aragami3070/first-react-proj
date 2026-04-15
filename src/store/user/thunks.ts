@@ -3,7 +3,7 @@ import api from "../../api/axios";
 import { startLoading, stopLoading } from "../settings";
 import type { AxiosError } from "axios";
 import type { ApiError } from "../../api/type";
-import { authInitialized, logoutLocal, refresh } from ".";
+import { logoutLocal } from ".";
 
 export const login = createAsyncThunk(
   "user/login",
@@ -13,11 +13,9 @@ export const login = createAsyncThunk(
       const tokens = await api.post("Auth/Login", data);
 
       sessionStorage.setItem("refreshToken", tokens.data.refreshToken);
+      sessionStorage.setItem("accessToken", tokens.data.accessToken);
 
-      return {
-        user: null,
-        accessToken: tokens.data.accessToken,
-      }
+      return;
     } catch (e: any) {
       const error = e as AxiosError<ApiError>;
       return rejectWithValue(error.response?.data.message)
@@ -41,11 +39,9 @@ export const register = createAsyncThunk(
       const tokens = await api.post("Auth/Registration", data);
 
       sessionStorage.setItem("refreshToken", tokens.data.refreshToken);
+      sessionStorage.setItem("accessToken", tokens.data.accessToken);
 
-      return {
-        user: null,
-        accessToken: tokens.data.accessToken,
-      }
+      return;
     } catch (e: any) {
       const error = e as AxiosError<ApiError>;
       return rejectWithValue(error.response?.data.message)

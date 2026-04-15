@@ -1,12 +1,11 @@
-import { createSlice, type PayloadAction } from "@reduxjs/toolkit"
+import { createSlice} from "@reduxjs/toolkit"
 import type { UserState } from "./types"
 import { getMe, login, register } from "./thunks"
 
 const initialState: UserState = {
   user: null,
-  accessToken: null,
   isAuth: false,
-  isUserLoading: false,
+  isUserLoaded: false,
   isAuthInitialized: false
 }
 
@@ -16,63 +15,55 @@ const userSlice = createSlice({
   reducers: {
     logoutLocal: (state) => {
       state.user = null;
-      state.accessToken = null;
       state.isAuth = false;
-      state.isUserLoading = false;
+      state.isUserLoaded = false;
+      sessionStorage.removeItem("accessToken");
       sessionStorage.removeItem("refreshToken");
     },
-    refresh: (state, action: PayloadAction<string>) => {
-      state.accessToken = action.payload;
-      state.isAuth = true;
-      state.isAuthInitialized = true;
-    },
-    authInitialized: (state) => {
-      state.isAuthInitialized = true;
-    }
   },
   extraReducers: (builder) => {
     // Login
-    builder.addCase(login.fulfilled, (state, action) => {
+    builder.addCase(login.fulfilled, (state) => {
       state.user = null;
-      state.accessToken = action.payload.accessToken;
       state.isAuth = true;
       state.isAuthInitialized = true;
-      state.isUserLoading = false;
+      state.isUserLoaded = false;
     })
 
     builder.addCase(login.rejected, (state) => {
       state.isAuth = false;
-      state.isUserLoading = false;
+      state.isUserLoaded = false;
       state.isAuthInitialized = false;
     })
 
     // Registeration
-    builder.addCase(register.fulfilled, (state, action) => {
+    builder.addCase(register.fulfilled, (state) => {
       state.user = null;
-      state.accessToken = action.payload.accessToken;
       state.isAuth = true;
       state.isAuthInitialized = true;
-      state.isUserLoading = false;
+      state.isUserLoaded = false;
     })
 
     builder.addCase(register.rejected, (state) => {
       state.isAuth = false;
-      state.isUserLoading = false;
+      state.isUserLoaded = false;
     })
 
     // Profile
     builder.addCase(getMe.fulfilled, (state, action) => {
       state.user = action.payload.user;
-      state.isUserLoading = true;
+      state.isUserLoaded = true;
+      state.isAuth = true
+      state.isAuthInitialized = true;
     })
 
     builder.addCase(getMe.rejected, (state) => {
       state.user = null;
-      state.isUserLoading = false;
+      state.isUserLoaded = false;
       state.isAuth = false;
     })
   }
 })
 
-export const { logoutLocal, refresh, authInitialized } = userSlice.actions;
+export const { logoutLocal } = userSlice.actions;
 export default userSlice.reducer;
