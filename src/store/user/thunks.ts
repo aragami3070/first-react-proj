@@ -71,14 +71,14 @@ export const getMe = createAsyncThunk(
     }
   }
 )
-export const initAuth = createAsyncThunk(
-  "user/initAuth",
+
+export const refresh = createAsyncThunk(
+  "user/refresh",
   async (_, { dispatch }) => {
     dispatch(startLoading())
     const oldRefreshToken = sessionStorage.getItem("refreshToken");
 
     if (!oldRefreshToken) {
-      dispatch(authInitialized());
       dispatch(stopLoading())
       return;
     }
