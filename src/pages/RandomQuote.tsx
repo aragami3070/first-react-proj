@@ -11,11 +11,14 @@ export const RandomQuotePage = () => {
   const randomQuote = useAppSelector((state) => state.quotes.randomQuote);
 
   useEffect(() => {
-    dispatch(fetchRandomQuote());
+    const getRandomQuote = async () => {
+      await dispatch(fetchRandomQuote());
+    };
+    getRandomQuote()
   }, [dispatch]);
 
-  const handleRefresh = () => {
-    dispatch(fetchRandomQuote());
+  const handleRefresh = async () => {
+    await dispatch(fetchRandomQuote());
   };
 
   return (
