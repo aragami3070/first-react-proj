@@ -4,7 +4,7 @@ import AuthTemplatePage from "../components/AuthTemplatePage";
 import { type RootState } from "../store";
 import { useAppDispatch } from "../store/hooks";
 import { useSelector } from "react-redux";
-import { getMe, register } from "../store/user";
+import { register } from "../store/user";
 import { useNavigate } from "react-router-dom";
 
 export default function Register() {
@@ -19,9 +19,7 @@ export default function Register() {
       secondName: data.secondName,
       email: data.email,
       password: data.password
-    }))
-
-    await dispatch(getMe());
+    }));
 
     if (isAuth && isUserLoaded) {
       navigate("/profile")

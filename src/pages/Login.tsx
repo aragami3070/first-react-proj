@@ -1,5 +1,5 @@
 import type { SubmitHandler } from "react-hook-form";
-import { getMe, login } from "../store/user";
+import { login } from "../store/user";
 import { useAppDispatch } from "../store/hooks";
 import type { AuthFieldConfig } from "../components/AuthTemplatePage";
 import AuthTemplatePage from "../components/AuthTemplatePage";
@@ -19,8 +19,6 @@ export default function Login() {
       email: data.email,
       password: data.password
     }));
-
-    await dispatch(getMe());
 
     if (isAuth && isUserLoaded) {
       navigate("/profile")

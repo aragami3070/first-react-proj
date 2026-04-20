@@ -9,10 +9,10 @@ import {
   Button
 } from "@mui/material"
 import { type RootState } from "../store"
-import {  logoutLocal } from "../store/user"
 import { Link, useNavigate } from "react-router-dom"
 import { GridBackGroundLayout } from "../ui/GridBackGroundLayout"
 import { useAppDispatch, useAppSelector } from "../store/hooks"
+import { logout } from "../store/user"
 
 export default function Profile() {
   const user = useAppSelector((state: RootState) => state.user.user)
@@ -28,7 +28,7 @@ export default function Profile() {
   }
 
   const handleLogout = () => {
-    dispatch(logoutLocal())
+    dispatch(logout())
     navigate("/login")
   }
 
