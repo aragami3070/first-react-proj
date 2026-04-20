@@ -1,10 +1,18 @@
-export function getErrorMessage(status: number) {
+import type { AxiosError } from "axios";
+import type { ApiError } from "../api/type";
+
+export function getErrorMessage(error: AxiosError<ApiError, any>) {
+  let message = "";
+
+  const status = error.response?.status ?? -1;
   switch (status) {
-    case 400: return "Неверный запрос"
-    case 404: return "Данные не найденны, увы. Повторите запрос позже"
-    case 409: return "Почта уже занята"
-    case 422: return "Неправильные данные"
-    case 500: return "Технические шоколадки на сервере"
-    default: return "Неизвестаная ошибка"
+    case 400: message = "Неверный запрос"; break;
+    case 404: message = "Данные не найденны, увы. Повторите запрос позже"; break;
+    case 409: message = "Почта уже занята"; break;
+    case 422: message = "Неправильные данные"; break;
+    case 500: message = "Технические шоколадки на сервере"; break;
+    default: message = "Неизвестаная ошибка"
   }
+
+  return error.response?.data.message ?? message
 }
