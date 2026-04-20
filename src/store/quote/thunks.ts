@@ -1,10 +1,11 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../api/axios";
-import { startLoading, stopLoading } from "../settings";
+import { setError, startLoading, stopLoading } from "../settings";
 import type { AxiosError } from "axios";
 import type { ApiError } from "../../api/type";
 import { setQuotes, setRandomQuote, setTotal } from "./slice";
 import type { Quote } from "../../entities/quote/type";
+import { getErrorMessage } from "../../utils/errorTemplateMessage";
 
 export const createQuote = createAsyncThunk(
   "quotes/create",
@@ -15,6 +16,7 @@ export const createQuote = createAsyncThunk(
     }
     catch (e: any) {
       const error = e as AxiosError<ApiError>;
+      dispatch(setError(getErrorMessage(error)));
       return rejectWithValue(error.response?.data.message)
     }
     finally {
@@ -37,6 +39,7 @@ export const fetchQuotes = createAsyncThunk(
     }
     catch (e: any) {
       const error = e as AxiosError<ApiError>;
+      dispatch(setError(getErrorMessage(error)));
       return rejectWithValue(error.response?.data.message)
     }
     finally {
@@ -74,6 +77,7 @@ export const fetchRandomQuote = createAsyncThunk(
     }
     catch (e: any) {
       const error = e as AxiosError<ApiError>;
+      dispatch(setError(getErrorMessage(error)));
       return rejectWithValue(error.response?.data.message)
     }
     finally {
