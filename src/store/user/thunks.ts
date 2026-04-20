@@ -1,23 +1,31 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../api/axios";
-import { startLoading, stopLoading } from "../settings";
+import { setError, startLoading, stopLoading } from "../settings/slice";
 import type { AxiosError } from "axios";
 import type { ApiError } from "../../api/type";
-import { logoutLocal } from ".";
+import { getErrorMessage } from "../../utils/errorTemplateMessage";
+
+export const logout = createAsyncThunk("user/logout", async (_, { }) => {
+  return;
+});
 
 export const login = createAsyncThunk(
   "user/login",
   async (data: { email: string; password: string }, { rejectWithValue, dispatch }) => {
     try {
       dispatch(startLoading())
-      const tokens = await api.post("Auth/Login", data);
+      const tokens = await api.post<{ accessToken: string, refreshToken: string }>(
+        "Auth/Login", data
+      );
 
       sessionStorage.setItem("refreshToken", tokens.data.refreshToken);
       sessionStorage.setItem("accessToken", tokens.data.accessToken);
 
+      await dispatch(getMe()).unwrap();
       return;
     } catch (e: any) {
       const error = e as AxiosError<ApiError>;
+      dispatch(setError(getErrorMessage(error)));
       return rejectWithValue(error.response?.data.message)
     }
     finally {
@@ -36,14 +44,18 @@ export const register = createAsyncThunk(
   }, { rejectWithValue, dispatch }) => {
     try {
       dispatch(startLoading())
-      const tokens = await api.post("Auth/Registration", data);
+      const tokens = await api.post<{ accessToken: string, refreshToken: string }>(
+        "Auth/Registration", data
+      );
 
       sessionStorage.setItem("refreshToken", tokens.data.refreshToken);
       sessionStorage.setItem("accessToken", tokens.data.accessToken);
 
+      await dispatch(getMe()).unwrap();
       return;
     } catch (e: any) {
       const error = e as AxiosError<ApiError>;
+      dispatch(setError(getErrorMessage(error)));
       return rejectWithValue(error.response?.data.message)
     }
     finally {
@@ -64,6 +76,7 @@ export const getMe = createAsyncThunk(
       }
     } catch (e: any) {
       const error = e as AxiosError<ApiError>;
+      dispatch(setError("Сессия истекла. Зайдите заново"));
       return rejectWithValue(error.response?.data.message)
     }
     finally {
@@ -74,14 +87,9 @@ export const getMe = createAsyncThunk(
 
 export const refresh = createAsyncThunk(
   "user/refresh",
-  async (_, { dispatch }) => {
+  async (_, { dispatch, rejectWithValue }) => {
     dispatch(startLoading())
     const oldRefreshToken = sessionStorage.getItem("refreshToken");
-
-    if (!oldRefreshToken) {
-      dispatch(stopLoading())
-      return;
-    }
 
     try {
       const res = await api.post<{ accessToken: string, refreshToken: string }>(
@@ -93,8 +101,10 @@ export const refresh = createAsyncThunk(
       sessionStorage.setItem("accessToken", res.data.accessToken);
       sessionStorage.setItem("refreshToken", res.data.refreshToken);
 
-    } catch {
-      dispatch(logoutLocal());
+    } catch (e: any) {
+      const error = e as AxiosError<ApiError>;
+      dispatch(logout());
+      return rejectWithValue(error.response?.data.message)
     }
     finally {
       dispatch(stopLoading())
@@ -107,13 +117,14 @@ export const refreshAuth = createAsyncThunk(
   async (_, { dispatch }) => {
     dispatch(startLoading())
     try {
-      await dispatch(refresh());
+      await dispatch(refresh()).unwrap();
       await dispatch(getMe());
     } catch {
-      dispatch(logoutLocal());
+      dispatch(logout());
     }
     finally {
       dispatch(stopLoading())
     }
   }
 );
+
