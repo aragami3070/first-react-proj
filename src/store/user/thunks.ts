@@ -4,14 +4,19 @@ import { setError, startLoading, stopLoading } from "../settings/slice";
 import type { AxiosError } from "axios";
 import type { ApiError } from "../../api/type";
 import { getErrorMessage } from "../../utils/errorTemplateMessage";
+import { authFailed, authSuccess, clearUser, setUser } from "./slice";
 
-export const logout = createAsyncThunk("user/logout", async (_, { }) => {
-  return;
-});
+export const logout = createAsyncThunk(
+  "user/logout",
+  async (_, { dispatch }) => {
+    sessionStorage.setItem("refreshToken", "");
+    sessionStorage.setItem("accessToken", "");
+    dispatch(clearUser())
+  });
 
 export const login = createAsyncThunk(
   "user/login",
-  async (data: { email: string; password: string }, { rejectWithValue, dispatch }) => {
+  async (data: { email: string; password: string }, { dispatch }) => {
     try {
       dispatch(startLoading())
       const tokens = await api.post<{ accessToken: string, refreshToken: string }>(
@@ -21,12 +26,12 @@ export const login = createAsyncThunk(
       sessionStorage.setItem("refreshToken", tokens.data.refreshToken);
       sessionStorage.setItem("accessToken", tokens.data.accessToken);
 
+      dispatch(authSuccess());
       await dispatch(getMe()).unwrap();
-      return;
     } catch (e: any) {
       const error = e as AxiosError<ApiError>;
+      dispatch(authFailed());
       dispatch(setError(getErrorMessage(error)));
-      return rejectWithValue(error.response?.data.message)
     }
     finally {
       dispatch(stopLoading())
@@ -41,7 +46,7 @@ export const register = createAsyncThunk(
     secondName: string;
     email: string;
     password: string
-  }, { rejectWithValue, dispatch }) => {
+  }, { dispatch }) => {
     try {
       dispatch(startLoading())
       const tokens = await api.post<{ accessToken: string, refreshToken: string }>(
@@ -51,12 +56,12 @@ export const register = createAsyncThunk(
       sessionStorage.setItem("refreshToken", tokens.data.refreshToken);
       sessionStorage.setItem("accessToken", tokens.data.accessToken);
 
+      dispatch(authSuccess());
       await dispatch(getMe()).unwrap();
-      return;
     } catch (e: any) {
       const error = e as AxiosError<ApiError>;
+      dispatch(authFailed());
       dispatch(setError(getErrorMessage(error)));
-      return rejectWithValue(error.response?.data.message)
     }
     finally {
       dispatch(stopLoading())
@@ -66,18 +71,15 @@ export const register = createAsyncThunk(
 
 export const getMe = createAsyncThunk(
   "user/getMe",
-  async (_, { rejectWithValue, dispatch }) => {
+  async (_, { dispatch }) => {
     try {
       dispatch(startLoading())
       const user = await api.get("User/myprofile");
 
-      return {
-        user: user.data,
-      }
+      dispatch(setUser(user.data));
     } catch (e: any) {
-      const error = e as AxiosError<ApiError>;
+      dispatch(clearUser());
       dispatch(setError("Сессия истекла. Зайдите заново"));
-      return rejectWithValue(error.response?.data.message)
     }
     finally {
       dispatch(stopLoading())
@@ -87,7 +89,7 @@ export const getMe = createAsyncThunk(
 
 export const refresh = createAsyncThunk(
   "user/refresh",
-  async (_, { dispatch, rejectWithValue }) => {
+  async (_, { dispatch }) => {
     dispatch(startLoading())
     const oldRefreshToken = sessionStorage.getItem("refreshToken");
 
@@ -101,10 +103,10 @@ export const refresh = createAsyncThunk(
       sessionStorage.setItem("accessToken", res.data.accessToken);
       sessionStorage.setItem("refreshToken", res.data.refreshToken);
 
+      return true;
     } catch (e: any) {
-      const error = e as AxiosError<ApiError>;
       dispatch(logout());
-      return rejectWithValue(error.response?.data.message)
+      return false;
     }
     finally {
       dispatch(stopLoading())
@@ -117,10 +119,16 @@ export const refreshAuth = createAsyncThunk(
   async (_, { dispatch }) => {
     dispatch(startLoading())
     try {
-      await dispatch(refresh()).unwrap();
-      await dispatch(getMe());
+      const isRefresed = await dispatch(refresh());
+      if (isRefresed) {
+        await dispatch(getMe());
+      }
+      else {
+        dispatch(authFailed());
+      }
     } catch {
       dispatch(logout());
+      dispatch(authFailed());
     }
     finally {
       dispatch(stopLoading())
