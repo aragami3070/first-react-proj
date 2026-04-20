@@ -24,7 +24,7 @@ export const ErrorModal = () => {
             color: theme.palette.error.main
           }
         }}
-      >Error</DialogTitle>
+      >Ошибка</DialogTitle>
       <DialogContent>
         <Typography
           sx={(theme) => {
