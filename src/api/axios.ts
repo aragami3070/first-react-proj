@@ -1,9 +1,6 @@
 import axios from "axios";
 import type { AxiosError, AxiosInstance } from "axios";
-import { getErrorMessage } from "../utils/errorTemplateMessage";
 import type { ApiError, RetryAxiosRequestConfig } from "./type";
-import { dropError, unauthorized } from "../utils/dropError";
-import { refreshTokens } from "../utils/refreshLogic";
 
 const api: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -28,26 +25,37 @@ api.interceptors.response.use(
     const originalRequest = error.config as RetryAxiosRequestConfig;
 
     // NOTE: попытка обновить accessToken и сделать запрос снова
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (error.response?.status === 401
+      && !originalRequest._retry
+      && !originalRequest.url?.includes("Auth/RefreshAllTokens")
+    ) {
       originalRequest._retry = true;
 
+      const oldRefreshToken = sessionStorage.getItem("refreshToken");
+      if (!oldRefreshToken) {
+        sessionStorage.setItem("accessToken", "");
+        sessionStorage.setItem("refreshToken", "");
+        return;
+      }
       try {
-        const newAccessToken = await refreshTokens();
+        const res = await api.put<{ access_token: string, refresh_token: string }>(
+          "Auth/RefreshAllTokens",
+          null,
+          { params: oldRefreshToken }
+        );
+
+        sessionStorage.setItem("accessToken", res.data.access_token);
+        sessionStorage.setItem("refreshToken", res.data.refresh_token);
+
         // повторяем запрос с новым accessToken
-        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-        return api(originalRequest);
+        originalRequest.headers.Authorization = `Bearer ${res.data.access_token}`;
+        return await api(originalRequest);
       } catch (e: any) {
-        unauthorized()
+        sessionStorage.setItem("accessToken", "");
+        sessionStorage.setItem("refreshToken", "");
+        return Promise.reject(e);
       }
     }
-
-    const message = error.response?.data.message
-      ?? getErrorMessage(error.response?.status ?? -1);
-
-    if (error.response?.status !== 401) {
-      dropError(message)
-    }
-
     return Promise.reject(error);
   }
 );
