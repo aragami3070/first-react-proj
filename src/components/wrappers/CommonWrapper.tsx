@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { useAppSelector } from "../../store/hooks";
 import { CircularProgress, Box } from "@mui/material";
+import { ErrorModal } from "../ErrorModal";
 
 
 export const CommonWrapper = ({ children }: { children: ReactNode }) => {
@@ -8,6 +9,7 @@ export const CommonWrapper = ({ children }: { children: ReactNode }) => {
 
   return (
     <Box sx={{ position: "relative" }}>
+      <ErrorModal />
       <Box
         sx={{
           filter: isLoading ? "blur(4px)" : "none",
